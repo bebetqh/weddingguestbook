@@ -558,6 +558,7 @@ async function countdown(seconds = 3) {
 }
 
 
+
 async function takeSnapshot() {
   const video = $("#cameraVideo");
   const canvas = $("#captureCanvas");
@@ -582,41 +583,28 @@ async function takeSnapshot() {
     throw new Error("Could not prepare the photo.");
   }
 
-  /*
-   * CAMERA FRAMING
-   * Adjust these values if you need more or less upward framing.
-   * A smaller cropY keeps more of the top of the original image.
-   */
-  const zoom = 1.12;
-  const horizontalCrop = sourceWidth / zoom;
-  const verticalCrop = sourceHeight / zoom;
-
-  const cropX = (sourceWidth - horizontalCrop) / 2;
-  const cropY = sourceHeight * 0.04;
-
+  // Use the full camera image without cutting off the top.
+  // The photo strip will handle its own framing below.
   ctx.save();
 
   if (facingMode === "user") {
-    ctx.translate(canvas.width, 0);
+    ctx.translate(sourceWidth, 0);
     ctx.scale(-1, 1);
   }
 
   ctx.drawImage(
     video,
-    cropX,
-    cropY,
-    horizontalCrop,
-    verticalCrop,
     0,
     0,
-    canvas.width,
-    canvas.height
+    sourceWidth,
+    sourceHeight
   );
 
   ctx.restore();
 
   return canvas.toDataURL("image/jpeg", 0.94);
 }
+
 
 
 function renderSlots() {
@@ -732,23 +720,30 @@ $("#retakeButton")?.addEventListener("click", () => {
 // =========================================================
 
 
+
 function drawCrop(ctx, image, x, y, width, height, monochrome = false) {
-  const sourceRatio = image.width / image.height;
+  const sourceWidth = image.width;
+  const sourceHeight = image.height;
+
+  const sourceRatio = sourceWidth / sourceHeight;
   const targetRatio = width / height;
 
   let sx = 0;
   let sy = 0;
-  let sw = image.width;
-  let sh = image.height;
+  let sw = sourceWidth;
+  let sh = sourceHeight;
 
   if (sourceRatio > targetRatio) {
-    sw = image.height * targetRatio;
-    sx = (image.width - sw) / 2;
+    // Image is wider than the photo frame.
+    sw = sourceHeight * targetRatio;
+    sx = (sourceWidth - sw) / 2;
   } else {
-    sh = image.width / targetRatio;
+    // Image is taller than the photo frame.
+    sh = sourceWidth / targetRatio;
 
-    // Keep the crop near the top instead of centering it vertically.
-    sy = Math.max(0, (image.height - sh) * 0.12);
+    // Move the crop window toward the top.
+    // Increase 0.12 to 0.20 to show more of the upper image.
+    sy = (sourceHeight - sh) * 0.20;
   }
 
   ctx.save();
@@ -759,12 +754,19 @@ function drawCrop(ctx, image, x, y, width, height, monochrome = false) {
 
   ctx.drawImage(
     image,
-    sx, sy, sw, sh,
-    x, y, width, height
+    sx,
+    sy,
+    sw,
+    sh,
+    x,
+    y,
+    width,
+    height
   );
 
   ctx.restore();
 }
+
 
 
 // =========================================================
