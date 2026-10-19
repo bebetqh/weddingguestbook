@@ -557,11 +557,12 @@ async function countdown(seconds = 3) {
   }
 }
 
+
 async function takeSnapshot() {
   const video = $("#cameraVideo");
   const canvas = $("#captureCanvas");
 
-  if (!cameraStream || !video?.videoWidth) {
+  if (!cameraStream || !video?.videoWidth || !video.videoHeight) {
     throw new Error("The camera is not ready.");
   }
 
@@ -569,25 +570,54 @@ async function takeSnapshot() {
     throw new Error("The capture canvas is missing.");
   }
 
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
+  const sourceWidth = video.videoWidth;
+  const sourceHeight = video.videoHeight;
+
+  canvas.width = sourceWidth;
+  canvas.height = sourceHeight;
 
   const ctx = canvas.getContext("2d");
 
-  if (!ctx) throw new Error("Could not prepare the photo.");
+  if (!ctx) {
+    throw new Error("Could not prepare the photo.");
+  }
+
+  /*
+   * CAMERA FRAMING
+   * Adjust these values if you need more or less upward framing.
+   * A smaller cropY keeps more of the top of the original image.
+   */
+  const zoom = 1.12;
+  const horizontalCrop = sourceWidth / zoom;
+  const verticalCrop = sourceHeight / zoom;
+
+  const cropX = (sourceWidth - horizontalCrop) / 2;
+  const cropY = sourceHeight * 0.04;
+
+  ctx.save();
 
   if (facingMode === "user") {
-    ctx.save();
     ctx.translate(canvas.width, 0);
     ctx.scale(-1, 1);
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    ctx.restore();
-  } else {
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
   }
+
+  ctx.drawImage(
+    video,
+    cropX,
+    cropY,
+    horizontalCrop,
+    verticalCrop,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  ctx.restore();
 
   return canvas.toDataURL("image/jpeg", 0.94);
 }
+
 
 function renderSlots() {
   const slots = $$("#snapSlots .snap-slot");
@@ -701,6 +731,7 @@ $("#retakeButton")?.addEventListener("click", () => {
 // 8. PHOTO CROPPING
 // =========================================================
 
+
 function drawCrop(ctx, image, x, y, width, height, monochrome = false) {
   const sourceRatio = image.width / image.height;
   const targetRatio = width / height;
@@ -715,7 +746,9 @@ function drawCrop(ctx, image, x, y, width, height, monochrome = false) {
     sx = (image.width - sw) / 2;
   } else {
     sh = image.width / targetRatio;
-    sy = (image.height - sh) / 2;
+
+    // Keep the crop near the top instead of centering it vertically.
+    sy = Math.max(0, (image.height - sh) * 0.12);
   }
 
   ctx.save();

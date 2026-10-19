@@ -673,22 +673,19 @@ h2 em {
    Applies to the live preview without changing its layout.
 ========================================================= */
 
+
 .camera-stage video {
   display: none;
   width: 100%;
   height: 100%;
   object-fit: cover;
-
-  /* Main adjustment: raise the subject in the preview */
-  object-position: center 80%;
-
-  /* Keep the front-camera mirror effect */
-  transform: scaleX(-1);
+  object-position: center 25%;
 }
 
 .camera-stage video.ready {
   display: block;
 }
+
 
 .camera-placeholder {
   position: absolute;
