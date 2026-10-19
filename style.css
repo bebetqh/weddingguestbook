@@ -1,3 +1,4 @@
+
 /* =========================================================
    SYAHLEN & ATIQAH — WEDDING PHOTOBOOTH
    Romantic Burgundy / Cream / Blush Theme
@@ -99,7 +100,6 @@ video {
   }
 }
 
-
 /* =========================================================
    HEADER AND NAVIGATION
 ========================================================= */
@@ -186,7 +186,6 @@ video {
   font-size: 19px;
 }
 
-
 /* =========================================================
    COMMON TYPOGRAPHY
 ========================================================= */
@@ -243,7 +242,6 @@ h2 em {
 .full {
   width: 100%;
 }
-
 
 /* =========================================================
    BUTTONS
@@ -303,7 +301,6 @@ h2 em {
 .text-button:hover {
   color: var(--rose);
 }
-
 
 /* =========================================================
    HOMEPAGE HERO
@@ -443,7 +440,6 @@ h2 em {
   font-size: 32px;
 }
 
-
 /* =========================================================
    GALLERY
 ========================================================= */
@@ -560,7 +556,6 @@ h2 em {
   font-style: italic;
 }
 
-
 /* =========================================================
    PAGE HEADINGS
 ========================================================= */
@@ -594,7 +589,6 @@ h2 em {
   color: rgba(182, 110, 126, 0.17);
   font-size: 82px;
 }
-
 
 /* =========================================================
    PHOTOBOOTH LAYOUT
@@ -673,11 +667,22 @@ h2 em {
     radial-gradient(circle at 50% 30%, #f2e2dd, #dfc7c2 80%);
 }
 
+/* =========================================================
+   CAMERA POSITION FIX
+   Shifts the visible video framing upward.
+   Applies to the live preview without changing its layout.
+========================================================= */
+
 .camera-stage video {
   display: none;
   width: 100%;
   height: 100%;
   object-fit: cover;
+
+  /* Main adjustment: raise the subject in the preview */
+  object-position: center 65%;
+
+  /* Keep the front-camera mirror effect */
   transform: scaleX(-1);
 }
 
@@ -867,7 +872,6 @@ h2 em {
   font-size: 11px;
   text-align: center;
 }
-
 
 /* =========================================================
    SIDEBAR AND TEMPLATE PICKER
@@ -1116,7 +1120,6 @@ h2 em {
   line-height: 1.6;
 }
 
-
 /* =========================================================
    FINAL PHOTO STRIP
 ========================================================= */
@@ -1211,7 +1214,6 @@ textarea {
 .result-actions .secondary-button {
   margin-top: 10px;
 }
-
 
 /* =========================================================
    GUESTBOOK
@@ -1320,7 +1322,6 @@ textarea {
   overflow-wrap: anywhere;
 }
 
-
 /* =========================================================
    FOOTER
 ========================================================= */
@@ -1365,7 +1366,6 @@ textarea {
   letter-spacing: 2px;
 }
 
-
 /* =========================================================
    RESPONSIVE TABLET
 ========================================================= */
@@ -1405,7 +1405,6 @@ textarea {
     margin-top: 22px;
   }
 }
-
 
 /* =========================================================
    RESPONSIVE MOBILE
@@ -1573,6 +1572,11 @@ textarea {
 
   .camera-stage {
     min-height: 250px;
+  }
+
+  /* Preserve the adjusted framing on mobile */
+  .camera-stage video {
+    object-position: center 65%;
   }
 
   .camera-placeholder h3 {
