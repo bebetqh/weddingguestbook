@@ -8,7 +8,7 @@
 // =========================================================
 
 const SUPABASE_URL = "https://ckariqbwrbutieiqjmpq.supabase.co";
-const SUPABASE_KEY = "sb_publishable_Sc0t5Eifo5PzB4r8y6b3QQ_UhkYaDte";
+const SUPABASE_KEY = "ssb_publishable_Sc0t5Eifo5PzB4r8y6b3QQ_UhkYaDte";
 
 const BUCKET = "wedding-media";
 const PHOTO_TABLE = "wedding_photos";
@@ -1758,4 +1758,3 @@ function initializeApp() {
 }
 
 initializeApp();
-
