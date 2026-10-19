@@ -680,7 +680,7 @@ h2 em {
   object-fit: cover;
 
   /* Main adjustment: raise the subject in the preview */
-  object-position: center 65%;
+  object-position: center 80%;
 
   /* Keep the front-camera mirror effect */
   transform: scaleX(-1);
