@@ -439,8 +439,15 @@ async function startCamera() {
 
     await video.play();
 
-    video.classList.add("ready");
-    video.style.transform = facingMode === "user" ? "scaleX(-1)" : "none";
+   video.classList.add("ready");
+
+// Adjust the camera framing to move the face higher.
+video.style.objectFit = "cover";
+video.style.objectPosition = "center 70%";
+
+// Keep the front-camera mirror effect.
+video.style.transform =
+  facingMode === "user" ? "scaleX(-1)" : "none";
 
     const placeholder = $("#cameraPlaceholder");
     if (placeholder) placeholder.style.display = "none";
@@ -721,51 +728,54 @@ $("#retakeButton")?.addEventListener("click", () => {
 
 
 
+
+
 function drawCrop(ctx, image, x, y, width, height, monochrome = false) {
-  const sourceWidth = image.width;
-  const sourceHeight = image.height;
+  const sourceWidth = image.naturalWidth || image.width;
+  const sourceHeight = image.naturalHeight || image.height;
 
-  const sourceRatio = sourceWidth / sourceHeight;
-  const targetRatio = width / height;
-
-  let sx = 0;
-  let sy = 0;
-  let sw = sourceWidth;
-  let sh = sourceHeight;
-
-  if (sourceRatio > targetRatio) {
-    // Image is wider than the photo frame.
-    sw = sourceHeight * targetRatio;
-    sx = (sourceWidth - sw) / 2;
-  } else {
-    // Image is taller than the photo frame.
-    sh = sourceWidth / targetRatio;
-
-    // Move the crop window toward the top.
-    // Increase 0.12 to 0.20 to show more of the upper image.
-    sy = (sourceHeight - sh) * 0.20;
+  if (!sourceWidth || !sourceHeight || !width || !height) {
+    return;
   }
 
+  // Scale the whole photo to fit inside the frame without cropping.
+  const scale = Math.min(
+    width / sourceWidth,
+    height / sourceHeight
+  );
+
+  const drawWidth = sourceWidth * scale;
+  const drawHeight = sourceHeight * scale;
+
+  const drawX = x + (width - drawWidth) / 2;
+  const drawY = y + (height - drawHeight) / 2;
+
   ctx.save();
+
+  // Fill the unused area around the photo.
+  ctx.fillStyle = "#e8dfd5";
+  ctx.fillRect(x, y, width, height);
 
   if (monochrome) {
     ctx.filter = "grayscale(100%)";
   }
 
+  // Draw the complete photo without cutting off the face.
   ctx.drawImage(
     image,
-    sx,
-    sy,
-    sw,
-    sh,
-    x,
-    y,
-    width,
-    height
+    0,
+    0,
+    sourceWidth,
+    sourceHeight,
+    drawX,
+    drawY,
+    drawWidth,
+    drawHeight
   );
 
   ctx.restore();
 }
+
 
 
 
