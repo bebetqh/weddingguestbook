@@ -7,8 +7,8 @@
 // 1. SUPABASE CONFIGURATION
 // =========================================================
 
-const SUPABASE_URL = "https://ckariqbwrbutieiqjmpq.supabase.co";
-const SUPABASE_KEY = "ssb_publishable_Sc0t5Eifo5PzB4r8y6b3QQ_UhkYaDte";
+const SUPABASE_URL = "https://hxaudbnyagbfhhwuawua.supabase.co";
+const SUPABASE_KEY = "sb_publishable_5qi7c3qLl4q";
 
 const BUCKET = "wedding-media";
 const PHOTO_TABLE = "wedding_photos";
@@ -439,15 +439,8 @@ async function startCamera() {
 
     await video.play();
 
-   video.classList.add("ready");
-
-// Adjust the camera framing to move the face higher.
-video.style.objectFit = "cover";
-video.style.objectPosition = "center 70%";
-
-// Keep the front-camera mirror effect.
-video.style.transform =
-  facingMode === "user" ? "scaleX(-1)" : "none";
+    video.classList.add("ready");
+    video.style.transform = facingMode === "user" ? "scaleX(-1)" : "none";
 
     const placeholder = $("#cameraPlaceholder");
     if (placeholder) placeholder.style.display = "none";
@@ -564,13 +557,11 @@ async function countdown(seconds = 3) {
   }
 }
 
-
-
 async function takeSnapshot() {
   const video = $("#cameraVideo");
   const canvas = $("#captureCanvas");
 
-  if (!cameraStream || !video?.videoWidth || !video.videoHeight) {
+  if (!cameraStream || !video?.videoWidth) {
     throw new Error("The camera is not ready.");
   }
 
@@ -578,41 +569,25 @@ async function takeSnapshot() {
     throw new Error("The capture canvas is missing.");
   }
 
-  const sourceWidth = video.videoWidth;
-  const sourceHeight = video.videoHeight;
-
-  canvas.width = sourceWidth;
-  canvas.height = sourceHeight;
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
 
   const ctx = canvas.getContext("2d");
 
-  if (!ctx) {
-    throw new Error("Could not prepare the photo.");
-  }
-
-  // Use the full camera image without cutting off the top.
-  // The photo strip will handle its own framing below.
-  ctx.save();
+  if (!ctx) throw new Error("Could not prepare the photo.");
 
   if (facingMode === "user") {
-    ctx.translate(sourceWidth, 0);
+    ctx.save();
+    ctx.translate(canvas.width, 0);
     ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    ctx.restore();
+  } else {
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
   }
-
-  ctx.drawImage(
-    video,
-    0,
-    0,
-    sourceWidth,
-    sourceHeight
-  );
-
-  ctx.restore();
 
   return canvas.toDataURL("image/jpeg", 0.94);
 }
-
-
 
 function renderSlots() {
   const slots = $$("#snapSlots .snap-slot");
@@ -726,57 +701,37 @@ $("#retakeButton")?.addEventListener("click", () => {
 // 8. PHOTO CROPPING
 // =========================================================
 
-
-
-
-
 function drawCrop(ctx, image, x, y, width, height, monochrome = false) {
-  const sourceWidth = image.naturalWidth || image.width;
-  const sourceHeight = image.naturalHeight || image.height;
+  const sourceRatio = image.width / image.height;
+  const targetRatio = width / height;
 
-  if (!sourceWidth || !sourceHeight || !width || !height) {
-    return;
+  let sx = 0;
+  let sy = 0;
+  let sw = image.width;
+  let sh = image.height;
+
+  if (sourceRatio > targetRatio) {
+    sw = image.height * targetRatio;
+    sx = (image.width - sw) / 2;
+  } else {
+    sh = image.width / targetRatio;
+    sy = (image.height - sh) / 2;
   }
 
-  // Scale the whole photo to fit inside the frame without cropping.
-  const scale = Math.min(
-    width / sourceWidth,
-    height / sourceHeight
-  );
-
-  const drawWidth = sourceWidth * scale;
-  const drawHeight = sourceHeight * scale;
-
-  const drawX = x + (width - drawWidth) / 2;
-  const drawY = y + (height - drawHeight) / 2;
-
   ctx.save();
-
-  // Fill the unused area around the photo.
-  ctx.fillStyle = "#e8dfd5";
-  ctx.fillRect(x, y, width, height);
 
   if (monochrome) {
     ctx.filter = "grayscale(100%)";
   }
 
-  // Draw the complete photo without cutting off the face.
   ctx.drawImage(
     image,
-    0,
-    0,
-    sourceWidth,
-    sourceHeight,
-    drawX,
-    drawY,
-    drawWidth,
-    drawHeight
+    sx, sy, sw, sh,
+    x, y, width, height
   );
 
   ctx.restore();
 }
-
-
 
 
 // =========================================================

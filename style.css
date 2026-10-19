@@ -1,4 +1,3 @@
-
 /* =========================================================
    SYAHLEN & ATIQAH — WEDDING PHOTOBOOTH
    Romantic Burgundy / Cream / Blush Theme
@@ -100,6 +99,7 @@ video {
   }
 }
 
+
 /* =========================================================
    HEADER AND NAVIGATION
 ========================================================= */
@@ -186,6 +186,7 @@ video {
   font-size: 19px;
 }
 
+
 /* =========================================================
    COMMON TYPOGRAPHY
 ========================================================= */
@@ -242,6 +243,7 @@ h2 em {
 .full {
   width: 100%;
 }
+
 
 /* =========================================================
    BUTTONS
@@ -301,6 +303,7 @@ h2 em {
 .text-button:hover {
   color: var(--rose);
 }
+
 
 /* =========================================================
    HOMEPAGE HERO
@@ -440,6 +443,7 @@ h2 em {
   font-size: 32px;
 }
 
+
 /* =========================================================
    GALLERY
 ========================================================= */
@@ -556,6 +560,7 @@ h2 em {
   font-style: italic;
 }
 
+
 /* =========================================================
    PAGE HEADINGS
 ========================================================= */
@@ -589,6 +594,7 @@ h2 em {
   color: rgba(182, 110, 126, 0.17);
   font-size: 82px;
 }
+
 
 /* =========================================================
    PHOTOBOOTH LAYOUT
@@ -655,12 +661,6 @@ h2 em {
   text-align: right;
 }
 
-
-/* =========================================================
-   CAMERA POSITION FIX
-   Consistent camera framing on desktop and mobile.
-========================================================= */
-
 .camera-stage {
   position: relative;
   display: grid;
@@ -678,31 +678,12 @@ h2 em {
   width: 100%;
   height: 100%;
   object-fit: cover;
-
-  /* Move the visible framing upward so the face appears higher. */
-  object-position: center 70%;
-
-  /* Default front-camera mirror effect; JavaScript handles switching. */
   transform: scaleX(-1);
 }
 
 .camera-stage video.ready {
   display: block;
 }
-
-/* Keep the same framing on mobile. */
-@media (max-width: 620px) {
-  .camera-stage {
-    min-height: 250px;
-  }
-
-  .camera-stage video {
-    object-fit: cover;
-    object-position: center 70%;
-  }
-}
-
-
 
 .camera-placeholder {
   position: absolute;
@@ -886,6 +867,7 @@ h2 em {
   font-size: 11px;
   text-align: center;
 }
+
 
 /* =========================================================
    SIDEBAR AND TEMPLATE PICKER
@@ -1134,6 +1116,7 @@ h2 em {
   line-height: 1.6;
 }
 
+
 /* =========================================================
    FINAL PHOTO STRIP
 ========================================================= */
@@ -1228,6 +1211,7 @@ textarea {
 .result-actions .secondary-button {
   margin-top: 10px;
 }
+
 
 /* =========================================================
    GUESTBOOK
@@ -1336,6 +1320,7 @@ textarea {
   overflow-wrap: anywhere;
 }
 
+
 /* =========================================================
    FOOTER
 ========================================================= */
@@ -1380,6 +1365,7 @@ textarea {
   letter-spacing: 2px;
 }
 
+
 /* =========================================================
    RESPONSIVE TABLET
 ========================================================= */
@@ -1419,6 +1405,7 @@ textarea {
     margin-top: 22px;
   }
 }
+
 
 /* =========================================================
    RESPONSIVE MOBILE
@@ -1586,11 +1573,6 @@ textarea {
 
   .camera-stage {
     min-height: 250px;
-  }
-
-  /* Preserve the adjusted framing on mobile */
-  .camera-stage video {
-    object-position: center 65%;
   }
 
   .camera-placeholder h3 {
